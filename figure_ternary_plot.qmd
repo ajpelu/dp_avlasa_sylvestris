@@ -21,7 +21,6 @@ soil_raw <- read_delim("data/DatosFisicoquimicos_Psylvestris.txt") |>
   mutate(site = ifelse(site == "Snevada",  "S. Nevada", paste0("S. ", site)))
 ```
 
-
 ```{r}
 cols_sites <- c(
   "S. Almijara" = "#02BFFF",

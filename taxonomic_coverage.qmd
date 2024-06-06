@@ -1,0 +1,186 @@
+---
+title: "Taxonomic coverage"
+format: html
+execute: 
+  warning: false
+  error: false
+editor_options: 
+  chunk_output_type: console
+---
+
+# Explore taxonomic coverage
+
+```{r}
+library(gbifexplorer)
+library(tidyverse)
+library(patchwork)
+```
+
+#### All taxa 
+```{r}
+occ <- read_csv("output/dwc_db/occ.csv")
+
+all_taxa <- taxonomic_cov(occ |> filter(kingdom == "Bacteria"),
+                   category = c("kingdom", "phylum", "class", "order", "family", "genus"))
+
+custom_report_taxonomy <- function(x) { 
+
+  }
+all_taxa |> 
+  purrr::map(~report_taxonomy(., top=10)) |> 
+  purrr::list_transpose()
+
+```
+
+#### Bacteria
+```{r}
+b <- taxonomic_cov(occ |> filter(kingdom == "Bacteria"),
+                   category = c("kingdom", "phylum", "class", "order", "family", "genus"))
+
+report <- b |> 
+  purrr::map(~report_taxonomy(., top=10)) |> 
+  purrr::list_transpose()
+```
+
+#### Fungi 
+
+```{r}
+f <- taxonomic_cov(occ |> filter(kingdom == "Fungi"),
+                        category = c("kingdom", "phylum", "class", "order", "family", "genus"))
+
+report <- f |> 
+  purrr::map(~report_taxonomy(., top=10)) |> 
+  purrr::list_transpose()
+
+```
+
+
+## Plot 
+
+```{r}
+b_genus <- b$genus |> 
+  filter(!is.na(genus)) |> 
+  top_n(10) |> 
+  barplot_freq() + 
+  ggtitle("Most frequent Genus (Bacteria)") + 
+  theme(
+    axis.text.y = element_text(face = "italic")
+  ) 
+
+f_genus <- f$genus |> 
+  filter(!is.na(genus)) |> 
+  top_n(10) |> 
+  barplot_freq(bar_color = "#994F00") + 
+  ggtitle("Most frequent Genus (Fungi)") + 
+  theme(
+    axis.text.y = element_text(face = "italic")
+  ) 
+
+
+
+b_family <- b$family |> 
+  filter(!is.na(family)) |> 
+  top_n(10) |> 
+  barplot_freq() + 
+  ggtitle("Most frequent Family (Bacteria)") + 
+  theme(
+    axis.text.y = element_text(face = "italic")
+  ) 
+
+f_family <- f$family |> 
+  filter(!is.na(family)) |> 
+  top_n(10) |> 
+  barplot_freq(bar_color = "#994F00") + 
+  ggtitle("Most frequent Family (Fungi)") + 
+  theme(
+    axis.text.y = element_text(face = "italic")
+  ) 
+
+b_order <- b$order |> 
+  filter(!is.na(order)) |> 
+  top_n(10) |> 
+  barplot_freq() + 
+  ggtitle("Most frequent Order (Bacteria)") + 
+  theme(
+    axis.text.y = element_text(face = "italic")
+  ) 
+
+f_order <- f$order |> 
+  filter(!is.na(order)) |> 
+  top_n(10) |> 
+  barplot_freq(bar_color = "#994F00") + 
+  ggtitle("Most frequent Order (Fungi)") + 
+  theme(
+    axis.text.y = element_text(face = "italic")
+  ) 
+
+
+
+b_class <- b$class |> 
+  filter(!is.na(class)) |> 
+  top_n(10) |> 
+  barplot_freq() + 
+  ggtitle("Most frequent Class (Bacteria)") + 
+  theme(
+    axis.text.y = element_text(face = "italic")
+  ) 
+
+f_class <- f$class |> 
+  filter(!is.na(class)) |> 
+  top_n(10) |> 
+  barplot_freq(bar_color = "#994F00") + 
+  ggtitle("Most frequent Class (Fungi)") + 
+  theme(
+    axis.text.y = element_text(face = "italic")
+  ) 
+
+
+b_phylum <- b$phylum |> 
+  filter(!is.na(phylum)) |> 
+  top_n(10) |> 
+  barplot_freq() + 
+  ggtitle("Most frequent Phyla (Bacteria)") + 
+  theme(
+    axis.text.y = element_text(face = "italic")
+  ) 
+
+f_phylum <- f$phylum |> 
+  filter(!is.na(phylum)) |> 
+  top_n(10) |> 
+  barplot_freq(bar_color = "#994F00") + 
+  ggtitle("Most frequent Phyla (Fungi)") + 
+  theme(
+    axis.text.y = element_text(face = "italic")
+  ) 
+
+combined_plot <- (
+  (b_phylum | f_phylum) / 
+    (b_class | f_class) / 
+    (b_order | f_order) / 
+    (b_family | f_family) / 
+    (b_genus | f_genus)
+) + 
+  plot_layout(tag_level = 'new') +
+  plot_annotation(tag_levels = c('a', '1')) & 
+  theme(plot.tag = element_text(size = 12, face = 'bold', hjust = 0))
+```
+
+```{r}
+#| fig-height: 14
+#| fig-width: 10
+combined_plot
+```
+
+
+```{r}
+#| echo: false
+ggsave(
+  combined_plot, 
+  file = "output/taxonomic_coverage.png",
+  dpi = 300,
+  width = 29.7*.8, height = 42*.7,
+  units = "cm"
+)
+```
+
+
