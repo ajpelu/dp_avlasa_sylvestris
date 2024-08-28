@@ -100,7 +100,7 @@ proto_parent_event <-
     bibliographicCitation, institutionCode, datasetName, 
     samplingProtocol, 
     year, month, day, 
-    continent, country, countryCode, province, municipality, locality = location,
+    continent, country, countryCode, stateProvince = province, municipality, locality = location,
     decimalLatitude = lat, decimalLongitude = long, verbatimCoordinates = verbatim_coordinates,
     verbatimElevation = Elevation, habitat, 
     eventRemarks = health_status,
@@ -118,7 +118,7 @@ soil_event <- proto_parent_event |>
   mutate(protoID = paste0(tree, "S"),
          eventType = "Sampling",
          samplingProtocol = "Soil samples (500 g) to determine physicochemical parameters",
-         habitat = "Soil of each target tree (Pinus sylvestris)") |> 
+         habitat = "Soil close to the roots of each target tree (Pinus sylvestris)") |> 
   unite("eventID", c("protoID","sampling_date"), sep = "-", remove = TRUE)
 ```
 
@@ -127,7 +127,7 @@ soil_event <- proto_parent_event |>
 
 ```{r}
 micro_event <- proto_parent_event |> 
-  inner_join((bac |> dplyr::select(sample, tree) |> unique())) |> 
+  inner_join((fungi |> dplyr::select(sample, tree) |> unique())) |> 
   dplyr::select(-parentEventID, -eventType, -samplingProtocol, -habitat) |> 
   rename(parentEventID = eventID) |> 
   unite("eventID", c("sample","sampling_date"), sep = "-", remove = FALSE) |>
@@ -135,8 +135,8 @@ micro_event <- proto_parent_event |>
   mutate(
     eventType = "Sampling",
     samplingProtocol = case_when(
-      target == "E" ~ "DNA extraction from the root endosphere of Pinus sylvestris trees during the spring, and sequencing of the 16S rRNA gene",
-      target == "R" ~ "DNA extraction from the rhizosphere of Pinus sylvestris trees during the spring, and sequencing of the 16S rRNA gene"
+      target == "E" ~ "DNA extraction from the root endosphere of Pinus sylvestris trees during the spring, and sequencing of the 16S rRNA gene for bacteria and the fungal ITS2 region for fungi",
+      target == "R" ~ "DNA extraction from the rhizosphere of Pinus sylvestris trees during the spring, and sequencing of the 16S rRNA gene for bacteria and the fungal ITS2 region for fungi"
     ),
     habitat = case_when(
       target == "E" ~ "Root endosphere of Pinus sylvestris",
@@ -201,7 +201,7 @@ mof <- soil |>
   unite("measurementID", c("eventID", "id_var"), sep = "-", remove = FALSE) |> 
   mutate(
     measurementDeterminedDate = as.Date(as.character(sampling_date), format = "%Y%m%d"),
-    measurementMethod = "",
+    measurementMethod = measurementMethod,
     measurementRemarks = "",
     measurementDeterminedBy = "Laboratorio Analítico Bioclínico (https://www.lab-sl.com/en/) Almería, Spain"
   ) |> 
@@ -248,7 +248,7 @@ df_idevents <- events |>
   filter(samplingProtocol != "Soil samples (500 g) to determine physicochemical parameters") |> 
   filter(!is.na(parentEventID)) |> 
   dplyr::select(eventID, habitat, license, institutionCode, language, datasetName, 
-                continent, country, countryCode, province, municipality, locality,
+                continent, country, countryCode, stateProvince, municipality, locality,
                 decimalLatitude, decimalLongitude) |> 
   separate(eventID, into = c("sample", "sampling_date"), remove = FALSE)
 
@@ -258,15 +258,15 @@ occ_bac <- bac |>
   unite("occurrenceID", c("eventID","ASV"), sep = "-", remove = FALSE) |> 
   mutate(
     basisOfRecord = "MaterialSample",
-    collectionCode = "XXXXX",
+    collectionCode = "MAE_PSylvestris",
     recordedBy = "Ana V. Lasa | Pablo J. Villadas | Manuel Fernández-López",
-    identifyBy = "Ana V Lasa",
+    identifiedBy = "Ana V. Lasa",
     identifiedByID = "https://orcid.org/0000-0003-3783-7157",
     occurrenceStatus = case_when(
       n == 0 ~ "absent", 
       n > 0 ~ "present"),
     preparations = "DNA extract",
-    nameAccordingToID = "http://rdp.cme.msu.edu/", 
+    nameAccordingToID = "Ribosomal Database Project RDP-II training set v.18", 
     verbatimIdentification = ASV
   ) |> 
   rename(
@@ -276,10 +276,10 @@ occ_bac <- bac |>
   relocate(
     occurrenceID, language, license, institutionCode, collectionCode, datasetName, 
     basisOfRecord, recordedBy, individualCount, occurrenceStatus, preparations,
-    eventID, identifyBy, identifiedByID, taxonID, nameAccordingToID,
+    eventID, identifiedBy, identifiedByID, taxonID, nameAccordingToID,
     kingdom = Kingdom, phylum = Phylum, class = Class, order = Order, family = Family, genus = Genus,
     verbatimIdentification, 
-    continent, country, countryCode, province, municipality, locality,
+    continent, country, countryCode, stateProvince, municipality, locality,
     decimalLatitude, decimalLongitude, habitat,
     fieldNumber = sample) |> 
   dplyr::select(-tree, -target, -sampling_date)
@@ -295,15 +295,15 @@ occ_fungi <- fungi |>
   unite("occurrenceID", c("eventID","ASV"), sep = "-", remove = FALSE) |> 
   mutate(
     basisOfRecord = "MaterialSample",
-    collectionCode = "XXXXX",
+    collectionCode = "MAE_PSylvestris",
     recordedBy = "Ana V. Lasa | Pablo J. Villadas | Manuel Fernández-López",
-    identifyBy = "Ana V Lasa",
+    identifiedBy = "Ana V. Lasa",
     identifiedByID = "https://orcid.org/0000-0003-3783-7157",
     occurrenceStatus = case_when(
       n == 0 ~ "absent", 
       n > 0 ~ "present"),
     preparations = "DNA extract",
-    nameAccordingToID = "http://rdp.cme.msu.edu/", 
+    nameAccordingToID = "Ribosomal Database Project RDP-II training set v.18", 
     verbatimIdentification = ASV
   ) |> 
   rename(
@@ -313,10 +313,10 @@ occ_fungi <- fungi |>
   relocate(
     occurrenceID, language, license, institutionCode, collectionCode, datasetName, 
     basisOfRecord, recordedBy, individualCount, occurrenceStatus, preparations,
-    eventID, identifyBy, identifiedByID, taxonID, nameAccordingToID,
+    eventID, identifiedBy, identifiedByID, taxonID, nameAccordingToID,
     kingdom = Kingdom, phylum = Phylum, class = Class, order = Order, family = Family, genus = Genus,
     verbatimIdentification, 
-    continent, country, countryCode, province, municipality, locality,
+    continent, country, countryCode, stateProvince, municipality, locality,
     decimalLatitude, decimalLongitude, habitat,
     fieldNumber = sample) |> 
   dplyr::select(-tree, -target, -sampling_date)

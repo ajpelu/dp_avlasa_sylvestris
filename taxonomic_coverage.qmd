@@ -16,6 +16,180 @@ library(tidyverse)
 library(patchwork)
 ```
 
+
+
+#### All taxa 
+
+```{r}
+# Genus 
+compute_freq <- function(x, category, code_unknown = NA){ 
+  
+  category <- rlang::sym(category)
+  
+  aux <- x |> 
+    dplyr::group_by(
+      dplyr::across(
+        dplyr::all_of(category))) |> 
+    dplyr::tally(sort = TRUE) |> 
+    dplyr::ungroup()
+  
+  dna <- aux |> dplyr::mutate(freq_all = prop.table(n) * 100)
+  
+  if(is.na(code_unknown)) { 
+    d <- aux |> dplyr::filter(!is.na(!!sym(category))) |> dplyr::mutate(freq = prop.table(n) * 100)
+  } else { 
+    d <- aux |> dplyr::filter(!!sym(category) != code_unknown) |> dplyr::mutate(freq = prop.table(n) * 100)
+    }
+  
+  out <- dplyr::full_join(dna, d) 
+  return(out)
+  
+} 
+  
+
+
+
+
+
+compute_freq(occ, "genus")
+compute_freq(occu, "genus", code_unknown = "unclass.")
+compute_freq(occ, "family")
+compute_freq(occ, "order")
+compute_freq(occ, "class")
+
+
+occu <- occ |> mutate(genus = str_replace_na(genus, replacement = "unclass."))
+
+select_categories <- c("genus", "family")
+
+o <- purrr::set_names(
+  purrr::map(select_categories, ~compute_freq(occ, category = .x)), 
+        select_categories)
+
+
+
+
+  group_by(tally(genus)) |>
+  mutate(freq = prop.table(n) * 100)
+  
+  
+
+
+
+
+
+
+
+
+
+
+```
+
+
+
+```{r}
+taxonomic_freq <- function(x, category, code_unknown = NA){ 
+  n <- freq  <- NULL 
+  
+  dwc_categories <- c(
+    "kingdom", "phylum", "class",
+    "order", "family", "subfamily", "genus", "scientificName")
+  
+  if(!(category %in% dwc_categories)) {
+    stop(paste("category must be one of the:", paste(dwc_categories, collapse = ", ")))
+  }
+
+  category <- rlang::sym(category)
+  
+  aux <- x |> 
+    dplyr::group_by(
+      dplyr::across(
+        dplyr::all_of(category))) |> 
+    dplyr::tally(sort = TRUE) |> 
+    dplyr::ungroup()
+  
+  dna <- aux |> dplyr::mutate(freq_all = prop.table(n) * 100)
+  
+  if(is.na(code_unknown)) { 
+    d <- aux |> dplyr::filter(!is.na(!!sym(category))) |> dplyr::mutate(freq = prop.table(n) * 100)
+  } else { 
+    d <- aux |> dplyr::filter(!!sym(category) != code_unknown) |> dplyr::mutate(freq = prop.table(n) * 100)
+  }
+  
+  out <- dplyr::full_join(dna, d) 
+  return(out)
+  
+} 
+
+taxonomic_freq(occ, "genus")
+```
+
+
+```{r}
+taxonomic_cov <- function(x,
+                          category = c(
+                            "scientificName", "kingdom", "phylum", "class",
+                            "order", "family", "subfamily", "genus", "all"
+                          ),
+                          code_unknown = NA) {
+  all_categories <- c(
+    "scientificName", "kingdom", "phylum", "class",
+    "order", "family", "subfamily", "genus", "all"
+  )
+
+  if (!inherits(x, "data.frame") && !inherits(x, "tbl_df")) {
+    stop("Input 'x' must be a data frame or tibble.")
+  }
+
+  if ("all" %in% category && length(category) > 1) {
+    stop("Cannot combine 'all' with other categories.\n Please select 'all' categories or a combination of several categories")
+  }
+
+  if ("all" %in% category) {
+    select_categories <- setdiff(all_categories, "all")
+    select_categories <- select_categories[select_categories %in% names(x)]
+  } else {
+    select_categories <- category
+  }
+
+  # aux_summary <- function(categories) {
+  #   n <- freq <- NULL
+  #   x |>
+  #     # group_by(!!!syms(y)) |>
+  #     dplyr::group_by(dplyr::across(dplyr::all_of(categories))) |>
+  #     dplyr::tally() |>
+  #     dplyr::mutate(freq = prop.table(n) * 100) |>
+  #     dplyr::arrange(dplyr::desc(freq))
+  # }
+  
+  # out <- purrr::set_names(
+  #           purrr::map(select_categories, ~taxonomic_freq(x, category = .x, code_unknown = code_unknown)), 
+  #   select_categories)
+  # 
+  # 
+  
+  out <- select_categories |>
+    purrr::map(~taxonomic_freq(x, category = .x, code_unknown = code_unknown)) |>
+    purrr::set_names(select_categories)
+  return(out)
+}
+
+
+
+
+select_categories
+
+
+out <- purrr::set_names(
+            purrr::map(select_categories, ~taxonomic_cov(occ, category = .x, code_unknown = code_unknown)), 
+    select_categories)
+
+```
+
+
+
+
+
 #### All taxa 
 ```{r}
 occ <- read_csv("output/dwc_db/occ.csv")
@@ -40,6 +214,10 @@ b <- taxonomic_cov(occ |> filter(kingdom == "Bacteria"),
 report <- b |> 
   purrr::map(~report_taxonomy(., top=10)) |> 
   purrr::list_transpose()
+
+
+
+
 ```
 
 #### Fungi 
@@ -51,6 +229,12 @@ f <- taxonomic_cov(occ |> filter(kingdom == "Fungi"),
 report <- f |> 
   purrr::map(~report_taxonomy(., top=10)) |> 
   purrr::list_transpose()
+
+
+
+
+
+
 
 ```
 

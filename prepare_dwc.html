@@ -191,7 +191,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    bibliographicCitation, institutionCode, datasetName, </span>
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    samplingProtocol, </span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    year, month, day, </span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    continent, country, countryCode, province, municipality, <span class="at">locality =</span> location,</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    continent, country, countryCode, <span class="at">stateProvince =</span> province, municipality, <span class="at">locality =</span> location,</span>
 <span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">decimalLatitude =</span> lat, <span class="at">decimalLongitude =</span> long, <span class="at">verbatimCoordinates =</span> verbatim_coordinates,</span>
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbatimElevation =</span> Elevation, habitat, </span>
 <span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">eventRemarks =</span> health_status,</span>
@@ -209,7 +209,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">protoID =</span> <span class="fu">paste0</span>(tree, <span class="st">"S"</span>),</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">eventType =</span> <span class="st">"Sampling"</span>,</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">samplingProtocol =</span> <span class="st">"Soil samples (500 g) to determine physicochemical parameters"</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">habitat =</span> <span class="st">"Soil of each target tree (Pinus sylvestris)"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">habitat =</span> <span class="st">"Soil close to the roots of each target tree (Pinus sylvestris)"</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(<span class="st">"eventID"</span>, <span class="fu">c</span>(<span class="st">"protoID"</span>,<span class="st">"sampling_date"</span>), <span class="at">sep =</span> <span class="st">"-"</span>, <span class="at">remove =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
@@ -217,7 +217,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="rhizosphere-and-endosphere-events">Rhizosphere and Endosphere Events</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>micro_event <span class="ot">&lt;-</span> proto_parent_event <span class="sc">|&gt;</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>((bac <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(sample, tree) <span class="sc">|&gt;</span> <span class="fu">unique</span>())) <span class="sc">|&gt;</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>((fungi <span class="sc">|&gt;</span> dplyr<span class="sc">::</span><span class="fu">select</span>(sample, tree) <span class="sc">|&gt;</span> <span class="fu">unique</span>())) <span class="sc">|&gt;</span> </span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>parentEventID, <span class="sc">-</span>eventType, <span class="sc">-</span>samplingProtocol, <span class="sc">-</span>habitat) <span class="sc">|&gt;</span> </span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">parentEventID =</span> eventID) <span class="sc">|&gt;</span> </span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(<span class="st">"eventID"</span>, <span class="fu">c</span>(<span class="st">"sample"</span>,<span class="st">"sampling_date"</span>), <span class="at">sep =</span> <span class="st">"-"</span>, <span class="at">remove =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
@@ -225,8 +225,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">eventType =</span> <span class="st">"Sampling"</span>,</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">samplingProtocol =</span> <span class="fu">case_when</span>(</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      target <span class="sc">==</span> <span class="st">"E"</span> <span class="sc">~</span> <span class="st">"DNA extraction from the root endosphere of Pinus sylvestris trees during the spring, and sequencing of the 16S rRNA gene"</span>,</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>      target <span class="sc">==</span> <span class="st">"R"</span> <span class="sc">~</span> <span class="st">"DNA extraction from the rhizosphere of Pinus sylvestris trees during the spring, and sequencing of the 16S rRNA gene"</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      target <span class="sc">==</span> <span class="st">"E"</span> <span class="sc">~</span> <span class="st">"DNA extraction from the root endosphere of Pinus sylvestris trees during the spring, and sequencing of the 16S rRNA gene for bacteria and the fungal ITS2 region for fungi"</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>      target <span class="sc">==</span> <span class="st">"R"</span> <span class="sc">~</span> <span class="st">"DNA extraction from the rhizosphere of Pinus sylvestris trees during the spring, and sequencing of the 16S rRNA gene for bacteria and the fungal ITS2 region for fungi"</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    ),</span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">habitat =</span> <span class="fu">case_when</span>(</span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>      target <span class="sc">==</span> <span class="st">"E"</span> <span class="sc">~</span> <span class="st">"Root endosphere of Pinus sylvestris"</span>,</span>
@@ -264,7 +264,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(<span class="st">"measurementID"</span>, <span class="fu">c</span>(<span class="st">"eventID"</span>, <span class="st">"id_var"</span>), <span class="at">sep =</span> <span class="st">"-"</span>, <span class="at">remove =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">measurementDeterminedDate =</span> <span class="fu">as.Date</span>(<span class="fu">as.character</span>(sampling_date), <span class="at">format =</span> <span class="st">"%Y%m%d"</span>),</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">measurementMethod =</span> <span class="st">""</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">measurementMethod =</span> measurementMethod,</span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">measurementRemarks =</span> <span class="st">""</span>,</span>
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">measurementDeterminedBy =</span> <span class="st">"Laboratorio Analítico Bioclínico (https://www.lab-sl.com/en/) Almería, Spain"</span></span>
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
@@ -297,7 +297,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(samplingProtocol <span class="sc">!=</span> <span class="st">"Soil samples (500 g) to determine physicochemical parameters"</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(parentEventID)) <span class="sc">|&gt;</span> </span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(eventID, habitat, license, institutionCode, language, datasetName, </span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                continent, country, countryCode, province, municipality, locality,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                continent, country, countryCode, stateProvince, municipality, locality,</span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                decimalLatitude, decimalLongitude) <span class="sc">|&gt;</span> </span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate</span>(eventID, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"sample"</span>, <span class="st">"sampling_date"</span>), <span class="at">remove =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
@@ -307,15 +307,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(<span class="st">"occurrenceID"</span>, <span class="fu">c</span>(<span class="st">"eventID"</span>,<span class="st">"ASV"</span>), <span class="at">sep =</span> <span class="st">"-"</span>, <span class="at">remove =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">basisOfRecord =</span> <span class="st">"MaterialSample"</span>,</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">collectionCode =</span> <span class="st">"XXXXX"</span>,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">collectionCode =</span> <span class="st">"MAE_PSylvestris"</span>,</span>
 <span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">recordedBy =</span> <span class="st">"Ana V. Lasa | Pablo J. Villadas | Manuel Fernández-López"</span>,</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">identifyBy =</span> <span class="st">"Ana V Lasa"</span>,</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">identifiedBy =</span> <span class="st">"Ana V. Lasa"</span>,</span>
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">identifiedByID =</span> <span class="st">"https://orcid.org/0000-0003-3783-7157"</span>,</span>
 <span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">occurrenceStatus =</span> <span class="fu">case_when</span>(</span>
 <span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>      n <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"absent"</span>, </span>
 <span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>      n <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"present"</span>),</span>
 <span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">preparations =</span> <span class="st">"DNA extract"</span>,</span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">nameAccordingToID =</span> <span class="st">"http://rdp.cme.msu.edu/"</span>, </span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">nameAccordingToID =</span> <span class="st">"Ribosomal Database Project RDP-II training set v.18"</span>, </span>
 <span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbatimIdentification =</span> ASV</span>
 <span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
 <span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
@@ -325,10 +325,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(</span>
 <span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>    occurrenceID, language, license, institutionCode, collectionCode, datasetName, </span>
 <span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>    basisOfRecord, recordedBy, individualCount, occurrenceStatus, preparations,</span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>    eventID, identifyBy, identifiedByID, taxonID, nameAccordingToID,</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>    eventID, identifiedBy, identifiedByID, taxonID, nameAccordingToID,</span>
 <span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">kingdom =</span> Kingdom, <span class="at">phylum =</span> Phylum, <span class="at">class =</span> Class, <span class="at">order =</span> Order, <span class="at">family =</span> Family, <span class="at">genus =</span> Genus,</span>
 <span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>    verbatimIdentification, </span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>    continent, country, countryCode, province, municipality, locality,</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>    continent, country, countryCode, stateProvince, municipality, locality,</span>
 <span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>    decimalLatitude, decimalLongitude, habitat,</span>
 <span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>    <span class="at">fieldNumber =</span> sample) <span class="sc">|&gt;</span> </span>
 <span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>tree, <span class="sc">-</span>target, <span class="sc">-</span>sampling_date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -340,15 +340,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unite</span>(<span class="st">"occurrenceID"</span>, <span class="fu">c</span>(<span class="st">"eventID"</span>,<span class="st">"ASV"</span>), <span class="at">sep =</span> <span class="st">"-"</span>, <span class="at">remove =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">basisOfRecord =</span> <span class="st">"MaterialSample"</span>,</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">collectionCode =</span> <span class="st">"XXXXX"</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">collectionCode =</span> <span class="st">"MAE_PSylvestris"</span>,</span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">recordedBy =</span> <span class="st">"Ana V. Lasa | Pablo J. Villadas | Manuel Fernández-López"</span>,</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">identifyBy =</span> <span class="st">"Ana V Lasa"</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">identifiedBy =</span> <span class="st">"Ana V. Lasa"</span>,</span>
 <span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">identifiedByID =</span> <span class="st">"https://orcid.org/0000-0003-3783-7157"</span>,</span>
 <span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">occurrenceStatus =</span> <span class="fu">case_when</span>(</span>
 <span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>      n <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"absent"</span>, </span>
 <span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>      n <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">~</span> <span class="st">"present"</span>),</span>
 <span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">preparations =</span> <span class="st">"DNA extract"</span>,</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">nameAccordingToID =</span> <span class="st">"http://rdp.cme.msu.edu/"</span>, </span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">nameAccordingToID =</span> <span class="st">"Ribosomal Database Project RDP-II training set v.18"</span>, </span>
 <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">verbatimIdentification =</span> ASV</span>
 <span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
 <span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
@@ -358,10 +358,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(</span>
 <span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    occurrenceID, language, license, institutionCode, collectionCode, datasetName, </span>
 <span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    basisOfRecord, recordedBy, individualCount, occurrenceStatus, preparations,</span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    eventID, identifyBy, identifiedByID, taxonID, nameAccordingToID,</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    eventID, identifiedBy, identifiedByID, taxonID, nameAccordingToID,</span>
 <span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">kingdom =</span> Kingdom, <span class="at">phylum =</span> Phylum, <span class="at">class =</span> Class, <span class="at">order =</span> Order, <span class="at">family =</span> Family, <span class="at">genus =</span> Genus,</span>
 <span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    verbatimIdentification, </span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    continent, country, countryCode, province, municipality, locality,</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    continent, country, countryCode, stateProvince, municipality, locality,</span>
 <span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>    decimalLatitude, decimalLongitude, habitat,</span>
 <span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">fieldNumber =</span> sample) <span class="sc">|&gt;</span> </span>
 <span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>tree, <span class="sc">-</span>target, <span class="sc">-</span>sampling_date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
