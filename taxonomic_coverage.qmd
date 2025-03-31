@@ -52,7 +52,7 @@ compute_freq <- function(x, category, code_unknown = NA){
 
 
 compute_freq(occ, "genus")
-compute_freq(occu, "genus", code_unknown = "unclass.")
+compute_freq(occ, "genus", code_unknown = "unclass.")
 compute_freq(occ, "family")
 compute_freq(occ, "order")
 compute_freq(occ, "class")
@@ -194,7 +194,7 @@ out <- purrr::set_names(
 ```{r}
 occ <- read_csv("output/dwc_db/occ.csv")
 
-all_taxa <- taxonomic_cov(occ |> filter(kingdom == "Bacteria"),
+all_taxa <- taxonomic_cov(occ,
                    category = c("kingdom", "phylum", "class", "order", "family", "genus"))
 
 custom_report_taxonomy <- function(x) { 

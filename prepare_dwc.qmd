@@ -22,7 +22,7 @@ library(DT)
 - The DarwinCore will contains several tables: 
   
   - `event` Table
-  - `measurementOrFact` table 
+  - `measurementOrFact` Table 
   - `occurrence` Table
   
 ## Prepare data 
@@ -259,7 +259,7 @@ occ_bac <- bac |>
   mutate(
     basisOfRecord = "MaterialSample",
     collectionCode = "MAE_PSylvestris",
-    recordedBy = "Ana V. Lasa | Pablo J. Villadas | Manuel Fernández-López",
+    recordedBy = "Ana V. Lasa | Antonio J. Fernández-González | Pablo J. Villadas | Jesús Mercado-Blanco | Antonio J. Pérez-Luque | Manuel Fernández-López",
     identifiedBy = "Ana V. Lasa",
     identifiedByID = "https://orcid.org/0000-0003-3783-7157",
     occurrenceStatus = case_when(
@@ -284,7 +284,6 @@ occ_bac <- bac |>
     fieldNumber = sample) |> 
   dplyr::select(-tree, -target, -sampling_date)
 
-
 ```
 
 
@@ -296,7 +295,7 @@ occ_fungi <- fungi |>
   mutate(
     basisOfRecord = "MaterialSample",
     collectionCode = "MAE_PSylvestris",
-    recordedBy = "Ana V. Lasa | Pablo J. Villadas | Manuel Fernández-López",
+    recordedBy = "Ana V. Lasa | Antonio J. Fernández-González | Pablo J. Villadas | Jesús Mercado-Blanco | Antonio J. Pérez-Luque | Manuel Fernández-López",
     identifiedBy = "Ana V. Lasa",
     identifiedByID = "https://orcid.org/0000-0003-3783-7157",
     occurrenceStatus = case_when(
